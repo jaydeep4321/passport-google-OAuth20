@@ -11,6 +11,7 @@ import {
   Session,
   Res,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -19,6 +20,9 @@ import { CurrrentUser } from './decorators/current-user.decorator';
 import { User } from './user.entity';
 import { FindOneParams } from './dtos/findOneParam';
 import { ResponseDto } from 'src/response.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GoogleOauthGuard } from 'src/auth/guards/google-oauth.guard';
+import { GoogleAuthGuard } from 'src/auth/guards/verify.guard';
 
 @Controller('auth')
 export class UsersController {
@@ -52,6 +56,7 @@ export class UsersController {
   // }
 
   @Get()
+  @UseGuards(GoogleAuthGuard)
   async findAllUsers(@Query('email') email: string, @Res() res: Response) {
     console.log('findAllUser called!');
     const user = await this.userService.find(email);

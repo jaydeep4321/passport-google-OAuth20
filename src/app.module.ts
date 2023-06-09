@@ -7,10 +7,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './users/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { GoogleStrategy } from './auth/strategies/google.strategy';
+import { PassportModule } from '@nestjs/passport';
 const dbConfig = require('../ormconfig');
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'google-token' }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,

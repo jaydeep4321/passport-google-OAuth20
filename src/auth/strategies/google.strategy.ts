@@ -3,6 +3,8 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { config } from 'dotenv';
 
 import { Injectable } from '@nestjs/common';
+import { lookup } from 'dns';
+import { log } from 'console';
 
 config();
 
@@ -13,7 +15,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
       callbackURL: 'http://localhost:3000/api/auth/google/callback',
-      scope: ['email', 'profile'],
+      //passReqToCallback: true,
+      scope: ['profile', 'email'],
     });
   }
 
@@ -23,6 +26,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
+    console.log('x value ====>', profile);
+    // console.log(profile);
     const { name, emails, photos } = profile;
     const user = {
       email: emails[0].value,
@@ -30,7 +35,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name.familyName,
       picture: photos[0].value,
       accessToken,
+      refreshToken,
+      // idToken: request.query.id_token,
     };
+
     done(null, user);
   }
+
+  // async authenticate(req) {
+  //   console.log(req.isAuthenticated());
+  // }
 }
