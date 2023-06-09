@@ -34,16 +34,11 @@ export class UsersController {
     return new ResponseDto().sendSuccess('success', user, res);
   }
 
-  // @Post('/signout')
-  // signOut(@Session() session: any) {
-  //   session.userId = null;
+  // @Post('/signup')
+  // async createUser(@Body() body: CreateUserDto, @Res() res: Response) {
+  //   const user = await this.userService.signup(body.email, body.password);
+  //   return new ResponseDto().sendSuccess('success', user, res);
   // }
-
-  @Post('/signup')
-  async createUser(@Body() body: CreateUserDto, @Res() res: Response) {
-    const user = await this.userService.signup(body.email, body.password);
-    return new ResponseDto().sendSuccess('success', user, res);
-  }
 
   // @Post('/signin')
   // async signin(

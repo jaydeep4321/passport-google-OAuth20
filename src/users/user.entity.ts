@@ -16,7 +16,7 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
+  name: string;
 
   @AfterInsert()
   logInsert() {

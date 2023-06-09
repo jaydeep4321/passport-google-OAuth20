@@ -1,19 +1,12 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
 @Injectable()
-export class GoogleAuthGuard implements CanActivate {
-  constructor(private readonly authService: AuthService) {}
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+export class GoogleAuthGuard extends AuthGuard('google') {
+  async canActivate(context: ExecutionContext) {
+    const activate = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-      return false;
-    }
-
-    return this.authService.verifyToken(token);
-    // const request = context.switchToHttp().getRequest();
-    // return request.isAuthenticated();
+    await super.logIn(request);
+    return activate;
   }
 }

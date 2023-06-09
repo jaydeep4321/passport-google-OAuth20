@@ -13,12 +13,6 @@ const scrypt = promisify(_scrypt);
 export class UsersService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-  create(email: string, password: string) {
-    const user = this.repo.create({ email, password });
-
-    return this.repo.save(user);
-  }
-
   async findOne(id: any) {
     console.log('id in service', id);
     const user = await this.repo.findOneBy({ id });
@@ -72,27 +66,27 @@ export class UsersService {
     return userArr;
   }
 
-  async signup(email: string, password: string) {
-    // 1) See if email is in use
-    const users = await this.find(email);
-    if (users.length) {
-      throw new BadRequestException('email in use');
-    }
-    // 2) Hash the users password
-    // ==>Generate a salt
-    const salt = randomBytes(8).toString('hex');
+  // async signup(email: string, password: string) {
+  //   // 1) See if email is in use
+  //   const users = await this.find(email);
+  //   if (users.length) {
+  //     throw new BadRequestException('email in use');
+  //   }
+  //   // 2) Hash the users password
+  //   // ==>Generate a salt
+  //   const salt = randomBytes(8).toString('hex');
 
-    // ==>Hash the salt and the password together
-    const hash = (await scrypt(password, salt, 32)) as Buffer;
+  //   // ==>Hash the salt and the password together
+  //   const hash = (await scrypt(password, salt, 32)) as Buffer;
 
-    // ==>Join the hashed result and the salt together
-    const result = salt + '.' + hash.toString('hex');
+  //   // ==>Join the hashed result and the salt together
+  //   const result = salt + '.' + hash.toString('hex');
 
-    // 3) Create new user and save it
-    const user = await this.create(email, result);
+  //   // 3) Create new user and save it
+  //   const user = await this.create(email, result);
 
-    // 4)return user
-    console.log('at the end of singup');
-    return user;
-  }
+  //   // 4)return user
+  //   console.log('at the end of singup');
+  //   return user;
+  // }
 }

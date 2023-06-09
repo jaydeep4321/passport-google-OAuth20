@@ -1,68 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { OAuth2Client } from 'google-auth-library';
-import { config } from 'dotenv';
-import axios from 'axios';
+import { User } from '../users/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserDetails } from '../utils/types';
 
 @Injectable()
 export class AuthService {
-  private readonly client: OAuth2Client;
-  constructor() {
-    this.client = new OAuth2Client(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_SECRET,
-      'http://localhost:3000/api/auth/google/callback',
-    ); // Replace CLIENT_ID with your actual Google OAuth 2.0 client ID
-  }
-  async verifyToken(token: string): Promise<boolean> {
-    try {
-      console.log('here ===>');
-      console.log(this.client);
+  constructor(
+    @InjectRepository(User) private readonly repo: Repository<User>,
+  ) {}
 
-      // const ticket = await this.client.getTokenInfo(token);
-      const ticket = await this.client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID, // Replace CLIENT_ID with your actual Google OAuth 2.0 client ID
-      });
-
-      console.log('data', ticket);
-      // const payload = ticket.getPayload();
-      // const userId = payload?.sub; // Retrieve the user ID from the token payload
-      // Perform additional validation or custom checks as needed
-      return true; // Token is valid
-    } catch (error) {
-      console.error('Token verification error:', error);
-      return false; // Token is invalid
-    }
+  async validateUser(details: UserDetails) {
+    console.log('AuthService');
+    console.log(details);
+    const user = await this.repo.findOneBy({ email: details.email });
+    console.log(user);
+    if (user) return user;
+    console.log('User not found. Creating...');
+    const newUser = this.repo.create(details);
+    return this.repo.save(newUser);
   }
 
-  googleLogin(req) {
-    if (!req.user) {
-      return 'No user from google';
-    }
-
-    console.log(req.user);
-
-    return {
-      message: 'User information from google',
-      user: req.user,
-    };
+  async findUser(id: number) {
+    const user = await this.repo.findOneBy({ id });
+    return user;
   }
-
-  // async validateAccessToken(accessToken: string): Promise<any> {
-  //   try {
-  //     console.log('here ==>');
-  //     console.log(accessToken);
-  //     const response = await axios.get(
-  //       `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`,
-  //     );
-  //     const tokenInfo = response.data;
-
-  //     console.log('response ===>', response);
-  //     console.log('tokeninfo ==>', tokenInfo);
-  //     return tokenInfo;
-  //   } catch (error) {
-  //     // Handle any errors that occurred during the API request
-  //     throw new Error('Failed to validate access token');
-  //   }
-  // }
 }
