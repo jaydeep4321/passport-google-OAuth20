@@ -12,7 +12,7 @@ const dbConfig = require('../ormconfig');
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'google-token' }),
+    PassportModule.register({ session: true}),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
