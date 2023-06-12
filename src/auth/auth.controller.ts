@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GoogleAuthGuard } from './guards/verify.guard';
 import { Request } from 'express';
@@ -13,11 +13,12 @@ export class AuthController {
 
   @Get('callback')
   @UseGuards(GoogleAuthGuard)
-  googleAuthRedirect(@Req() req) {
+  googleAuthRedirect(@Req() req, @Res() res) {
     // console.log('rejsdhfjksdf->', req);
+    // console.log('rejsdhfjksdf->', res);
+    // res.redirect('http://localhost:4200/todolist');
 
     return { msg: 'ok' };
-
     // return this.appService.googleLogin(req);
   }
 

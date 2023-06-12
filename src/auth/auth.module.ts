@@ -6,23 +6,29 @@ import { SessionSerializer } from './guards/Serializer';
 import { UsersService } from 'src/users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    PassportModule.register({ session: true }),
+  ],
   controllers: [AuthController],
   providers: [
     GoogleStrategy,
     {
       provide: 'AUTH_SERVICE',
-      useClass: AuthService
+      useClass: AuthService,
     },
     SessionSerializer,
     UsersService,
     AuthService,
   ],
-  exports: [{
-    provide: 'AUTH_SERVICE',
-    useClass: AuthService
-  },]
+  exports: [
+    {
+      provide: 'AUTH_SERVICE',
+      useClass: AuthService,
+    },
+  ],
 })
 export class AuthModule {}

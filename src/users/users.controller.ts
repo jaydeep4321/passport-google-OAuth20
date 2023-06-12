@@ -23,8 +23,9 @@ import { ResponseDto } from 'src/response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleOauthGuard } from 'src/auth/guards/google-oauth.guard';
 import { GoogleAuthGuard } from 'src/auth/guards/verify.guard';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 
-@Controller('auth')
+@Controller('api/auth/users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
@@ -51,7 +52,7 @@ export class UsersController {
   // }
 
   @Get()
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards(AuthenticatedGuard)
   async findAllUsers(@Query('email') email: string, @Res() res: Response) {
     console.log('findAllUser called!');
     const user = await this.userService.find(email);
