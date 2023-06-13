@@ -13,9 +13,10 @@ export class AuthController {
 
   @Get('callback')
   @UseGuards(GoogleAuthGuard)
-  googleAuthRedirect(@Req() req, @Res() res) {
+  googleAuthRedirect(@Req() req) {
     // console.log('rejsdhfjksdf->', req);
     // console.log('rejsdhfjksdf->', res);
+    console.log('it is here')
     // res.redirect('http://localhost:4200/todolist');
 
     return { msg: 'ok' };
